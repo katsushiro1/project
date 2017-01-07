@@ -2,6 +2,8 @@ import java.util.Scanner;
 
 public class MineSweeper99
 {
+  public static final Scanner kb = new Scanner(System.in);
+  
   public static void main(String args[]){
     Scanner kb = new Scanner(System.in);
     boolean game=true;
@@ -19,32 +21,7 @@ public class MineSweeper99
     Object[][]block=UserBoard(numRows);
     
     while(game){
-      System.out.println("What coordinate do you want to check?(x,y)");
-      String input=kb.next();
-      int comma=input.indexOf(",");
-      String rowCheck=input.substring(0,comma);
-      String colCheck=input.substring(comma+1);
-      int row=Integer.parseInt(rowCheck)-1;
-      int col=Integer.parseInt(colCheck)-1;
-      AskCoordinates(numRows,numCols,input,block,hidden);
-      block[row][col]=hidden[row][col];
-      revealNums(row,col,hidden);
-      for(int k=0;k<numRows;k++){
-        for(int l=0;l<numRows;l++){
-          System.out.print(block[k][l]+" ");
-        }
-        System.out.println();
-      }
-      if(hidden[row][col]==99){
-        System.out.println("Sorry, you lose! Play again?(Y/N)");
-        String again=kb.next();
-        if(again.equalsIgnoreCase("Y")){
-          game=true;
-        }
-        else{
-          game=false;
-        }
-      }
+      AskCoordinate(numRows,numCols,block, hidden, game);
     }
       
       kb.close();
@@ -186,23 +163,9 @@ public class MineSweeper99
     return block;
   }
   
-  public static void revealNums(int row, int col, int[][] hidden){
-    if(row<0||row>=hidden.length||col<0||col>=hidden[0].length){
-      return;}
-    if (hidden[row][col] != 0)
-    {
-      return ;
-    }
-    if (hidden[row][col] == 0){
-      return;
-    }   
-    revealNums(row+1,col,hidden);
-    revealNums(row-1,col,hidden);
-    revealNums(row,col+1,hidden);
-    revealNums(row,col-1,hidden);
-  }
-      public static void AskCoordinates(int numRows,int numCols,String input,Object[][]block,int[][]hidden){
-    Scanner kb=new Scanner(System.in);
+  public static void AskCoordinate(int numRows, int numCols, Object[][]block ,int[][] hidden ,boolean game){
+      System.out.println("What coordinate do you want to check?(x,y)");
+      String input=kb.next();
       int comma=input.indexOf(",");
       String rowCheck=input.substring(0,comma);
       String colCheck=input.substring(comma+1);
@@ -220,12 +183,40 @@ public class MineSweeper99
       System.out.println("The row that was checked was: "+rowCheck);
       System.out.println("The column that was checked was: "+colCheck);
       block[row][col]=hidden[row][col];
+      revealNums(row,col,hidden);
       for(int k=0;k<numRows;k++){
         for(int l=0;l<numRows;l++){
           System.out.print(block[k][l]+" ");
         }
         System.out.println();
       }
+      if(hidden[row][col]==99){
+        System.out.println("Sorry, you lose! Play again?(Y/N)");
+        String again=kb.next();
+        if(again.equalsIgnoreCase("Y")){
+          game=true;
+        }
+        else{
+          game=false;
+        }
+      }
+  }
+  
+  
+  public static void revealNums(int row, int col, int[][] hidden){
+    if(row<0||row>=hidden.length||col<0||col>=hidden[0].length){
+      return;}
+    if (hidden[row][col] != 0)
+    {
+      return ;
+    }
+    if (hidden[row][col] == 0){
+      return;
+    }   
+    revealNums(row+1,col,hidden);
+    revealNums(row-1,col,hidden);
+    revealNums(row,col+1,hidden);
+    revealNums(row,col-1,hidden);
   }
 }
 
