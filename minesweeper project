@@ -18,10 +18,10 @@ public class MineSweeper99
     int[][]location=MineLocation(mines,numRows,numRows);
     int[][]hidden=HiddenBoard(mines,numRows,numCols,location);
     Object[][]block=UserBoard(numRows);
-    
     while(game){
       AskCoordinate(numRows,numCols,block, hidden, game);
-    }
+      }
+    
       
       kb.close();
     }
@@ -188,33 +188,59 @@ public class MineSweeper99
         }
         System.out.println();
       }
+      
       if(hidden[row][col]==99){
         System.out.println("Sorry, you lose! Play again?(Y/N)");
-        String again=kb.next();
-        
+        String again=kb.next();        
         if(again.equalsIgnoreCase("Y")){
           game=true;
+          main(null);
         }
         else{
           game=false;
-          }
+          System.exit(0);
+        }
       }
+      System.out.println("Do you want to place a flag? (Y/N)");
+      String flagout=kb.next();
+      if(flagout.equalsIgnoreCase("Y")){
+        System.out.println("In which coordinate?(x,y)");
+        String flagc=kb.next();
+        comma=flagc.indexOf(",");
+        rowCheck=flagc.substring(0,comma);
+        colCheck=flagc.substring(comma+1);
+        row=Integer.parseInt(rowCheck)-1;
+        col=Integer.parseInt(colCheck)-1;
+        for(int k=0;k<numRows;k++){
+        for(int l=0;l<numRows;l++){
+          block[row][col]="F";
+          System.out.print(block[k][l]+" ");
+        }
+        System.out.println();
+        }
+      }
+        
+        
+    
   }
   
   
   public static void revealNums(int row, int col, int[][] hidden,Object[][]block){
     if(row<0||row>=hidden.length||col<0||col>=hidden[0].length){
       return;}
-    if (hidden[row][col] == 0&&block[row][col]=="*"){
+    if (hidden[row][col] == 0&&block[row][col]=="*"){    //if hidden has zero, in the board, it reveals all non zeros around it//
       block[row][col]=0;
-      
-      revealNums(row+1,col,hidden,block);
+      revealNums(row+1,col,hidden,block);                 //right, left, up,down//
       revealNums(row-1,col,hidden,block);
       revealNums(row,col+1,hidden,block);
       revealNums(row,col-1,hidden,block);
+      revealNums(row+1,col+1,hidden,block);             //up left, up right, down right, left right//
+      revealNums(row+1,col-1,hidden,block); 
+      revealNums(row-1,col+1,hidden,block); 
+      revealNums(row-1,col-1,hidden,block); 
     }
     else{
-      block[row][col]=hidden[row][col];
+      block[row][col]=hidden[row][col];    //non-zero just shows that number//
       return;
   }
 }
@@ -225,6 +251,8 @@ public class MineSweeper99
        
 
   
+
+
 
 
 
