@@ -5,7 +5,6 @@ public class MineSweeper99
   public static final Scanner kb = new Scanner(System.in);
   
   public static void main(String args[]){
-    Scanner kb = new Scanner(System.in);
     boolean game=true;
     
     System.out.println("How many rows/columns would you like? (Maximum of 10)");
