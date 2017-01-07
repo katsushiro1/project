@@ -1,0 +1,225 @@
+import java.util.Scanner;
+
+public class MineSweeper99
+{
+  public static void main(String args[]){
+    Scanner kb = new Scanner(System.in);
+    boolean game=true;
+    
+    System.out.println("How many rows/columns would you like? (Maximum of 10)");
+    int numRows = kb.nextInt();
+    while (numRows > 10){
+      System.out.println("Too many rows/columns. Enter a number less than or equal to 10.");
+      numRows = kb.nextInt();
+    }
+    int numCols =  numRows;
+    int mines=getMines(numRows);
+    int[][]location=MineLocation(mines,numRows,numRows);
+    int[][]hidden=HiddenBoard(mines,numRows,numCols,location);
+    Object[][]block=UserBoard(numRows);
+    
+    while(game){
+      System.out.println("What coordinate do you want to check?(x,y)");
+      String input=kb.next();
+      int comma=input.indexOf(",");
+      String rowCheck=input.substring(0,comma);
+      String colCheck=input.substring(comma+1);
+      while(Integer.parseInt(rowCheck)>numRows||Integer.parseInt(colCheck)>numRows||Integer.parseInt(rowCheck)<0||Integer.parseInt(colCheck)<0){
+        System.out.print("Please enter a valid coordinate!");
+        input=kb.next();
+        rowCheck=input.substring(0,comma);
+        colCheck=input.substring(comma+1);
+        if(Integer.parseInt(rowCheck)<=numRows&&Integer.parseInt(colCheck)<=numRows){
+          break;
+        }
+      }
+      int row=Integer.parseInt(rowCheck)-1;
+      int col=Integer.parseInt(colCheck)-1;
+      System.out.println("The row that was checked was: "+rowCheck);
+      System.out.println("The column that was checked was: "+colCheck);
+      block[row][col]=hidden[row][col];
+      revealNums(row,col,hidden);
+      for(int k=0;k<numRows;k++){
+        for(int l=0;l<numRows;l++){
+          System.out.print(block[k][l]+" ");
+        }
+        System.out.println();
+      }
+      if(hidden[row][col]==99){
+        System.out.println("Sorry, you lose! Play again?(Y/N)");
+        String again=kb.next();
+        if(again.equalsIgnoreCase("Y")){
+          game=true;
+        }
+        else{
+          game=false;
+        }
+      }
+    }
+      
+      kb.close();
+    }
+    
+    
+    public static int getMines(int numRows){
+    int mines = 0;
+    switch(numRows){
+      case 2:
+        mines = 1;
+        System.out.println("There is 1 mine.");
+        break;
+      case 3:
+        mines = 2;
+        System.out.println("There are 2 mines.");
+        break;
+      case 4:
+        mines = 3;
+        System.out.println("There are 3 mines.");
+        break;
+      case 5:
+        mines = 4;
+        System.out.println("There are 4 mines.");
+        break;
+      case 6:
+        mines = 5;
+        System.out.println("There are 5 mines.");
+        break;
+      case 7:
+        mines = 8;
+        System.out.println("There are 8 mines.");
+        break;
+      case 8:
+        mines = 10;
+        System.out.println("There are 10 mines.");
+        break;
+      case 9:
+        mines = 12;
+        System.out.println("There are 12 mines.");
+        break;
+      case 10:
+        mines = 13;
+        System.out.println("There are 13 mines.");
+        break;
+    }
+    return mines;
+}
+
+  public static int[][] MineLocation(int mines, int numRows, int numCols){
+    int[][] location = new int [mines][2]; 
+    for (int i = 0; i<mines; i++){ 
+        int mineAtRow = (int)((Math.random() * numRows)+1);
+        int mineAtCol = (int)((Math.random() * numCols)+1);
+        for (int j = 0; j<i; j++){
+          if (mineAtRow == location[j][0] && mineAtCol == location[j][1]){
+            mineAtRow = (int)((Math.random() * numRows)+1);
+            mineAtCol = (int)((Math.random() * numCols)+1);
+          }
+        }
+        location[i][0] = mineAtRow;
+        location[i][1] = mineAtCol;
+      }
+    return location;
+  }
+
+  public static int[][] HiddenBoard(int mines, int numRows, int numCols, int[][]location){
+    int[][] hidden = new int[numRows][numCols];
+    int count = 0;
+      for (int a=0; a<numRows;a++){
+        for (int b = 0; b<numCols; b++){
+          hidden[a][b]= 0;
+          int Xmax = a+1;
+          int Xmin = a-1;
+          int Ymax = b+1;
+          int Ymin = b-1;
+          if (a==0){
+            Xmin = 0;
+          }
+          if (b==0){
+            Ymin = 0;
+          }
+          if (a==numRows){
+            Xmax = numRows;
+          }
+          if (b==numCols){
+            Ymax = numCols;
+          }
+          for (int c = 0; c<mines; c++){
+            for (int i=Xmin;i<= Xmax; i++){
+              for (int j=Ymin; j<=Ymax; j++){
+                if (((i+1)+""+(j+1)).equals(location[c][0] + "" + location[c][1])){
+                  count++;
+                }
+              }
+            }
+            if (count>0){
+              hidden[a][b]+=(count);
+              count = 0;
+            }
+          }
+          for(int i=0;i<location.length;i++){
+            if ((a==location[i][0]-1)&&(b==location[i][1]-1)){
+              hidden[a][b] = 99;
+            }
+            
+          }
+        }
+        
+      } 
+      return hidden;
+  }
+        
+
+  public Object[][] HiddenBoardTwo(int[][] hidden, int numRows, int numCols){
+    Object[][] hiddenTwo = new Object[numRows][numCols];
+    for (int i =0; i<numRows; i++){
+      for (int j=0; j<numCols; j++){
+        if (hidden[i][j] == 99){
+          hiddenTwo[i][j] = "X";
+        }else{
+          hiddenTwo[i][j] = hidden[i][j];
+          }
+          System.out.print(hiddenTwo[i][j] + " " );
+        }
+        System.out.println();
+      }
+    return hiddenTwo;
+}
+  public static Object[][] UserBoard(int numRows){
+   Object[][] block= new Object[numRows][numRows];
+    for(int k=0;k<numRows;k++){
+      for(int l=0;l<numRows;l++){
+        block[k][l]="*";
+        System.out.print(block[k][l]+" ");
+        }
+      System.out.println();
+    }
+    return block;
+  }
+  
+  public static void revealNums(int row, int col, int[][] hidden){
+    if(row<0||row>=hidden.length||col<0||col>=hidden[0].length){
+      return;}
+    if (hidden[row][col] != 0)
+    {
+      return ;
+    }
+    if (hidden[row][col] == 0){
+      return;
+    }   
+    revealNums(row+1,col,hidden);
+    revealNums(row-1,col,hidden);
+    revealNums(row,col+1,hidden);
+    revealNums(row,col-1,hidden);
+  }
+}
+
+ 
+ 
+       
+
+  
+
+
+
+
+
